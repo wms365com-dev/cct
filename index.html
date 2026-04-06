@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#af1e2d">
+  <title>Maple Mentor | Canadian Citizenship Practice</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Interactive Canadian Citizenship Test Practice</p>
+        <h1>Maple Mentor</h1>
+        <p class="hero-text">
+          Study with spoken questions, timed drills, and touch-first practice designed to help future Canadians
+          feel calm, confident, and ready for test day.
+        </p>
+        <div class="hero-actions">
+          <button class="primary-action" data-start="study">Start Study Deck</button>
+          <button class="secondary-action" data-start="quiz">Take a Quiz Sprint</button>
+          <button class="secondary-action" data-start="mock">Launch Mock Test</button>
+          <a class="ghost-button resource-link" href="https://www.canada.ca/content/dam/ircc/migration/ircc/english/pdf/pub/discover-large.pdf" target="_blank" rel="noreferrer">Open Official Guide</a>
+        </div>
+        <p class="source-note">
+          Practice topics are aligned to the Government of Canada's
+          <a href="https://www.canada.ca/content/dam/ircc/migration/ircc/english/pdf/pub/discover-large.pdf" target="_blank" rel="noreferrer">Discover Canada study guide</a>.
+        </p>
+      </div>
+
+      <div class="hero-metrics">
+        <article class="metric-card">
+          <span class="metric-label">Question bank</span>
+          <strong id="question-count">0</strong>
+          <span class="metric-note">Rights, history, government, voting, symbols, justice, and geography</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Audio support</span>
+          <strong>Built in</strong>
+          <span class="metric-note">Text-to-speech with optional voice answer support</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Works anywhere</span>
+          <strong>Phone + Desktop</strong>
+          <span class="metric-note">Responsive cards, large tap targets, keyboard friendly controls</span>
+        </article>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel control-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Practice Modes</p>
+          <h2>Choose Your Session</h2>
+        </div>
+
+        <div class="mode-grid">
+          <button class="mode-card active" data-mode="study">
+            <span class="mode-name">Study Deck</span>
+            <span class="mode-copy">Read, listen, reveal, and learn with guided explanations.</span>
+          </button>
+          <button class="mode-card" data-mode="quiz">
+            <span class="mode-name">Quiz Sprint</span>
+            <span class="mode-copy">Fast multiple-choice rounds with instant feedback and scoring.</span>
+          </button>
+          <button class="mode-card" data-mode="mock">
+            <span class="mode-name">Mock Test</span>
+            <span class="mode-copy">A timed mixed session that feels closer to test pressure.</span>
+          </button>
+        </div>
+
+        <div class="focus-panel">
+          <div class="focus-header">
+            <h3>Focus Area</h3>
+            <p>Use a category filter for targeted practice or keep it broad.</p>
+          </div>
+          <div class="chip-row" id="category-chips"></div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-label">Overall accuracy</span>
+            <strong id="overall-accuracy">0%</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Sessions completed</span>
+            <strong id="sessions-completed">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Best streak</span>
+            <strong id="best-streak">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Saved cards</span>
+            <strong id="saved-count">0</strong>
+          </article>
+        </div>
+
+        <div class="guide-card">
+          <p class="guide-label">Official study source</p>
+          <h3>Discover Canada</h3>
+          <p>Use the same study guide topics the citizenship test is built around: rights, history, government, symbols, regions, and responsibilities.</p>
+        </div>
+      </section>
+
+      <section class="panel session-panel">
+        <div class="session-header">
+          <div>
+            <p class="eyebrow" id="session-kicker">Ready when you are</p>
+            <h2 id="session-title">Choose a mode to begin</h2>
+          </div>
+          <div class="session-pills">
+            <span class="pill" id="session-progress">0 / 0</span>
+            <span class="pill timer-pill" id="timer-pill">Practice timer off</span>
+          </div>
+        </div>
+
+        <div class="question-meta">
+          <span id="question-category">General practice</span>
+          <button class="ghost-button" id="bookmark-btn" type="button">Save card</button>
+        </div>
+
+        <article class="question-card">
+          <h3 id="question-text">
+            Pick a practice mode to start. The app will keep your progress on this device and can read the questions aloud.
+          </h3>
+          <div class="option-list" id="option-list"></div>
+          <div class="feedback-panel" id="feedback-panel">
+            <p id="feedback-title">How this works</p>
+            <p id="feedback-copy">
+              Study Deck is best for learning, Quiz Sprint checks recall, and Mock Test adds pressure with a timer.
+            </p>
+          </div>
+          <div class="translation-card hidden" id="translation-card">
+            <p class="translation-label">Spanish study support</p>
+            <h4 id="translation-question">Spanish translation appears here when support is turned on.</h4>
+            <div class="translation-options" id="translation-options"></div>
+            <p class="translation-explanation" id="translation-explanation">Answer the question or reveal the card to see the translated explanation.</p>
+            <p class="translation-note">This Spanish support is a learning aid. English stays primary so learners practice the wording they are most likely to face.</p>
+          </div>
+        </article>
+
+        <div class="session-actions">
+          <button class="secondary-action" id="read-btn" type="button">Read Question</button>
+          <button class="secondary-action" id="reveal-btn" type="button">Reveal Answer</button>
+          <button class="primary-action" id="next-btn" type="button">Next Question</button>
+          <button class="ghost-button" id="restart-btn" type="button">Restart Session</button>
+        </div>
+
+        <div class="review-strip" id="review-strip"></div>
+      </section>
+
+      <aside class="panel audio-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Audio Coach</p>
+          <h2>Read, Listen, Repeat</h2>
+        </div>
+
+        <label class="field">
+          <span>Voice</span>
+          <select id="voice-select"></select>
+        </label>
+
+        <label class="field">
+          <span>Speaking pace</span>
+          <input id="rate-range" type="range" min="0.8" max="1.3" step="0.05" value="1">
+        </label>
+
+        <label class="field">
+          <span>Volume</span>
+          <input id="volume-range" type="range" min="0.4" max="1" step="0.05" value="1">
+        </label>
+
+        <div class="toggle-list">
+          <label class="toggle-row">
+            <input id="auto-read-toggle" type="checkbox" checked>
+            <span>Automatically read new questions</span>
+          </label>
+          <label class="toggle-row">
+            <input id="listen-toggle" type="checkbox">
+            <span>Start voice listening after reading</span>
+          </label>
+          <label class="toggle-row">
+            <input id="show-spanish-toggle" type="checkbox">
+            <span>Show Spanish support under each question</span>
+          </label>
+        </div>
+
+        <div class="audio-actions">
+          <button class="secondary-action" id="listen-btn" type="button">Start Listening</button>
+          <button class="secondary-action" id="read-spanish-btn" type="button">Read in Spanish</button>
+          <button class="ghost-button" id="stop-audio-btn" type="button">Stop Audio</button>
+        </div>
+
+        <div class="voice-card">
+          <p class="voice-status" id="voice-status">Speech recognition is checking your browser support.</p>
+          <div class="transcript-shell">
+            <span class="transcript-label">Last voice command</span>
+            <p id="transcript-text">Try saying "option A", "repeat", "spanish", "next", or "study mode".</p>
+          </div>
+        </div>
+
+        <div class="coach-tips">
+          <h3>Practice Tips</h3>
+          <ul>
+            <li>Listen once, answer once, then repeat the explanation aloud.</li>
+            <li>Use a focus area when one topic feels weak.</li>
+            <li>Turn on Spanish support when the English wording feels confusing, then come back to the English card.</li>
+            <li>Save tough cards so you can revisit them quickly later.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <section class="panel helper-panel">
+      <div class="section-heading">
+        <p class="eyebrow">Language Help</p>
+        <h2>English First, Spanish Support</h2>
+      </div>
+      <p>
+        The citizenship test is based on English or French understanding, so Maple Mentor keeps the question flow in
+        English while offering Spanish translation and Spanish audio as extra support.
+      </p>
+    </section>
+
+    <section class="panel results-panel hidden" id="results-panel">
+      <div class="section-heading">
+        <p class="eyebrow">Session Review</p>
+        <h2 id="results-title">Your results</h2>
+      </div>
+
+      <div class="results-summary" id="results-summary"></div>
+      <div class="results-review" id="results-review"></div>
+    </section>
+  </div>
+
+  <script src="questions.js" defer></script>
+  <script src="translations.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
