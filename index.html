@@ -10,7 +10,65 @@
   <title>Maple Mentor | Canadian Citizenship Practice</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-auth-state="loading" data-auth-mode="signup">
+  <section class="auth-shell" id="auth-shell" aria-live="polite">
+    <div class="auth-card panel">
+      <div class="auth-copy">
+        <p class="eyebrow">Personal Study Account</p>
+        <h1>Maple Mentor</h1>
+        <p class="auth-lead">
+          Create an account so each learner keeps their own saved cards, voice settings, larger text choices, and study progress.
+        </p>
+        <div class="auth-points">
+          <div class="auth-point">Separate progress for every user</div>
+          <div class="auth-point">Simple sign in on phone or desktop</div>
+          <div class="auth-point">Your reading and language preferences stay with you</div>
+        </div>
+      </div>
+
+      <div class="auth-panel">
+        <div class="auth-mode-switch" role="tablist" aria-label="Account access">
+          <button class="auth-mode-btn active" data-auth-mode="signup" type="button">Create Account</button>
+          <button class="auth-mode-btn" data-auth-mode="login" type="button">Sign In</button>
+        </div>
+
+        <p class="auth-status" id="auth-status">Checking for your account...</p>
+
+        <form class="auth-form" id="signup-form">
+          <label class="field">
+            <span>Full name</span>
+            <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="Maria Lopez" required>
+          </label>
+          <label class="field">
+            <span>Email address</span>
+            <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="maria@example.com" required>
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+          </label>
+          <label class="field">
+            <span>Confirm password</span>
+            <input id="signup-confirm" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Repeat your password" required>
+          </label>
+          <button class="primary-action auth-submit" type="submit">Create My Account</button>
+        </form>
+
+        <form class="auth-form hidden" id="login-form">
+          <label class="field">
+            <span>Email address</span>
+            <input id="login-email" name="email" type="email" autocomplete="email" placeholder="maria@example.com" required>
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+          </label>
+          <button class="primary-action auth-submit" type="submit">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <div class="page-shell">
     <header class="hero panel">
       <div class="hero-copy">
@@ -54,8 +112,8 @@
     <section class="panel mobile-appbar">
       <button class="ghost-button mobile-back-btn" id="mobile-back-btn" type="button">Back</button>
       <div class="mobile-appbar-copy">
-        <p class="eyebrow" id="mobile-view-kicker">Current Session</p>
-        <h2 id="mobile-view-title">Practice</h2>
+        <p class="eyebrow" id="mobile-view-kicker">Your Study Plan</p>
+        <h2 id="mobile-view-title">Home</h2>
       </div>
       <button class="ghost-button mobile-settings-btn" id="mobile-settings-btn" type="button" aria-label="Open settings">
         <span class="settings-icon" aria-hidden="true">
@@ -72,6 +130,135 @@
     </section>
 
     <div class="app-content">
+    <section class="panel home-panel" data-mobile-panel="home">
+      <div class="section-heading">
+        <p class="eyebrow">Home</p>
+        <h2>Pick Up Where You Left Off</h2>
+      </div>
+
+        <article class="home-continue-card" id="continue-card">
+          <div>
+            <p class="continue-label">Continue Where I Left Off</p>
+            <h3 id="continue-title">No unfinished session yet</h3>
+            <p id="continue-copy">Start with a short set, a chapter review, or a full mock test.</p>
+            <p class="continue-meta" id="continue-meta">Your latest study path will appear here.</p>
+          </div>
+          <button class="primary-action continue-btn" id="continue-btn" type="button">Start New Session</button>
+        </article>
+
+        <div class="home-summary-strip" aria-label="Progress snapshot">
+          <article class="home-summary-card">
+            <span class="home-summary-label">Accuracy</span>
+            <strong id="home-overall-accuracy">0%</strong>
+          </article>
+          <article class="home-summary-card">
+            <span class="home-summary-label">Sessions</span>
+            <strong id="home-sessions-completed">0</strong>
+          </article>
+          <article class="home-summary-card">
+            <span class="home-summary-label">Saved</span>
+            <strong id="home-saved-count">0</strong>
+          </article>
+          <article class="home-summary-card">
+            <span class="home-summary-label">Best Streak</span>
+            <strong id="home-best-streak">0</strong>
+          </article>
+        </div>
+
+        <div class="home-grid">
+          <article class="home-card">
+            <div class="home-card-copy">
+              <p class="home-card-label">Quick Practice</p>
+            <h3>Short sessions that feel easy to start</h3>
+            <p>Build momentum with small sets, then move into a full mock test when you feel ready.</p>
+            </div>
+            <div class="quick-grid">
+              <button class="home-action-btn" data-quick-mode="quiz" data-quick-limit="3" type="button">3 Questions</button>
+              <button class="home-action-btn" data-quick-mode="quiz" data-quick-limit="5" type="button">5 Questions</button>
+              <button class="home-action-btn" data-quick-mode="quiz" data-quick-limit="10" type="button">10 Questions</button>
+              <button class="home-action-btn" data-quick-mode="mock" data-quick-limit="20" type="button">Full Mock</button>
+            </div>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-copy">
+              <p class="home-card-label">Fresh Questions</p>
+              <h3>Keep moving into new material</h3>
+              <p id="fresh-home-copy">Maple Mentor can bring in questions you have not answered yet.</p>
+            </div>
+            <button class="secondary-action home-wide-btn" id="fresh-questions-btn" type="button">Practice New Questions</button>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-copy">
+              <p class="home-card-label">Missed Questions</p>
+              <h3>Review the ones that need another look</h3>
+              <p id="missed-home-copy">Wrong answers stay together here so you can practice them again.</p>
+            </div>
+            <button class="secondary-action home-wide-btn" id="missed-questions-btn" type="button">Review Missed Questions</button>
+          </article>
+
+          <article class="home-card home-guide-card">
+            <div class="home-card-copy">
+              <p class="home-card-label">Official Guide</p>
+              <h3>Open the Discover Canada PDF</h3>
+              <p>Keep the official study guide one tap away while you practice on your phone.</p>
+            </div>
+            <a class="secondary-action home-wide-btn" href="https://www.canada.ca/content/dam/ircc/migration/ircc/english/pdf/pub/discover-large.pdf" target="_blank" rel="noreferrer">Open Official Guide</a>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-copy">
+              <p class="home-card-label">Study By Chapter</p>
+              <h3>Use Discover Canada topics</h3>
+            <p>Choose one chapter-style topic and review only the questions from that section.</p>
+          </div>
+          <div class="chapter-grid" id="chapter-grid"></div>
+        </article>
+
+        <article class="home-card">
+          <div class="home-card-copy">
+            <p class="home-card-label">Saved Cards</p>
+            <h3>Go back to the tough ones</h3>
+            <p id="saved-home-copy">Save cards during practice and come back to them here.</p>
+          </div>
+          <button class="secondary-action home-wide-btn" id="saved-cards-btn" type="button">Review Saved Cards</button>
+        </article>
+
+        <article class="home-card">
+          <div class="home-card-copy">
+            <p class="home-card-label">Weak Topics</p>
+            <h3>Practice the areas that need more time</h3>
+            <p>Maple Mentor watches which sections need more review.</p>
+          </div>
+          <div class="weak-topics-list" id="weak-topics-list"></div>
+        </article>
+
+        <article class="home-card test-date-card">
+          <div class="home-card-copy">
+            <p class="home-card-label">Test Day</p>
+            <h3 id="test-date-title">Set your citizenship test date</h3>
+            <p id="test-date-summary">Add your date in Settings to see a countdown and a study check-in.</p>
+            <p class="readiness-summary" id="readiness-summary">Your readiness summary will appear here.</p>
+          </div>
+          <button class="secondary-action home-wide-btn" id="open-test-settings-btn" type="button">Set Test Date</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel account-panel" data-mobile-panel="setup">
+      <div class="account-copy">
+        <p class="eyebrow">Signed In</p>
+        <h2 id="account-name">Welcome</h2>
+        <p class="account-email" id="account-email">No account connected yet.</p>
+        <p class="account-note">Each learner keeps separate saved cards, study scores, and reading settings.</p>
+        <p class="account-status" id="sync-status">Your account is ready.</p>
+      </div>
+      <div class="account-actions">
+        <button class="ghost-button" id="sign-out-btn" type="button">Sign Out</button>
+      </div>
+    </section>
+
     <section class="panel comfort-panel" data-mobile-panel="setup">
       <div class="comfort-copy">
         <p class="eyebrow">Comfort Controls</p>
@@ -82,15 +269,28 @@
         <button class="comfort-button active" data-font-scale="base" type="button">Normal Text</button>
         <button class="comfort-button" data-font-scale="large" type="button">Large Text</button>
         <button class="comfort-button" data-font-scale="xlarge" type="button">Extra Large</button>
+        <button class="comfort-button" data-font-scale="max" type="button">Largest Text</button>
         <button class="comfort-button" id="easy-view-btn" type="button">Easy View Off</button>
       </div>
+    </section>
+
+    <section class="panel test-plan-panel" data-mobile-panel="setup">
+      <div class="section-heading">
+        <p class="eyebrow">Test Planning</p>
+        <h2>Set Your Test Date</h2>
+      </div>
+      <label class="field">
+        <span>Citizenship test date</span>
+        <input id="test-date-input" type="date">
+      </label>
+      <p class="test-plan-note" id="test-plan-note">Choose a date to see a countdown and readiness summary on your Home screen.</p>
     </section>
 
     <main class="dashboard">
       <section class="panel control-panel" data-mobile-panel="setup">
         <div class="section-heading">
-          <p class="eyebrow">Practice Modes</p>
-          <h2>Choose Your Session</h2>
+          <p class="eyebrow">More Practice Options</p>
+          <h2>Choose A Study Style</h2>
         </div>
 
         <div class="mode-grid">
@@ -180,8 +380,22 @@
           </div>
         </article>
 
+        <section class="mini-player" aria-label="Audio mini player">
+          <div class="mini-player-main">
+            <button class="secondary-action" id="read-btn" type="button">Read Question</button>
+            <button class="secondary-action" id="read-spanish-btn" type="button">Read in Spanish</button>
+            <button class="ghost-button hidden" id="ready-answer-btn" type="button">I'm Ready To Answer</button>
+          </div>
+          <div class="mini-player-controls">
+            <button class="ghost-button" id="pause-audio-btn" type="button">Pause</button>
+            <button class="ghost-button" id="replay-audio-btn" type="button">Replay</button>
+            <button class="ghost-button" id="slower-audio-btn" type="button">Slower</button>
+            <button class="ghost-button" id="repeat-option-btn" type="button">Read Choice Again</button>
+            <button class="ghost-button" id="stop-audio-btn" type="button">Stop Audio</button>
+          </div>
+        </section>
+
         <div class="session-actions">
-          <button class="secondary-action" id="read-btn" type="button">Read Aloud</button>
           <button class="secondary-action" id="reveal-btn" type="button">Show Answer</button>
           <button class="primary-action" id="next-btn" type="button">Next Card</button>
           <button class="ghost-button" id="restart-btn" type="button">Start Over</button>
@@ -190,10 +404,11 @@
         <div class="review-strip" id="review-strip"></div>
       </section>
 
-      <aside class="panel audio-panel" data-mobile-panel="help">
+      <aside class="panel audio-panel" data-mobile-panel="setup">
         <div class="section-heading">
-          <p class="eyebrow">Audio Coach</p>
-          <h2>Read, Listen, Repeat</h2>
+          <p class="eyebrow">Voice Settings</p>
+          <h2>Choose The Reading Voice</h2>
+          <p class="audio-note">Pick the voice that feels easiest to follow. English and Spanish can each use a different voice.</p>
         </div>
 
         <label class="field">
@@ -233,8 +448,7 @@
 
         <div class="audio-actions">
           <button class="secondary-action" id="listen-btn" type="button">Start Listening</button>
-          <button class="secondary-action" id="read-spanish-btn" type="button">Read in Spanish</button>
-          <button class="ghost-button" id="stop-audio-btn" type="button">Stop Audio</button>
+          <button class="ghost-button" id="open-practice-audio-btn" type="button">Use Mini Player In Practice</button>
         </div>
 
         <div class="voice-card">
@@ -262,6 +476,12 @@
         <p class="eyebrow">Language Help</p>
         <h2>English First, Spanish Support</h2>
       </div>
+      <div class="helper-resource-card">
+        <p class="helper-resource-label">Official Study Source</p>
+        <h3>Discover Canada Guide</h3>
+        <p>Read the same official guide the practice topics are based on, right from your phone.</p>
+        <a class="secondary-action helper-guide-link" href="https://www.canada.ca/content/dam/ircc/migration/ircc/english/pdf/pub/discover-large.pdf" target="_blank" rel="noreferrer">Open Official Guide</a>
+      </div>
       <p>
         The citizenship test is based on English or French understanding, so Maple Mentor keeps the question flow in
         English while offering Spanish translation and Spanish audio as extra support.
@@ -275,11 +495,18 @@
       </div>
 
       <div class="results-summary" id="results-summary"></div>
+      <div class="results-actions">
+        <button class="primary-action" id="next-set-btn" type="button">Next Set</button>
+        <button class="secondary-action" id="retry-missed-btn" type="button">Practice Missed Questions</button>
+        <button class="ghost-button" id="study-weak-topic-btn" type="button">Study Weak Topic</button>
+      </div>
+      <p class="results-followup-note" id="results-followup-note"></p>
       <div class="results-review" id="results-review"></div>
     </section>
     </div>
 
     <nav class="panel mobile-nav" aria-label="App sections">
+      <button class="mobile-nav-btn active" data-mobile-view="home" type="button">Home</button>
       <button class="mobile-nav-btn" data-mobile-view="practice" type="button">Practice</button>
       <button class="mobile-nav-btn" data-mobile-view="help" type="button">Help</button>
     </nav>
