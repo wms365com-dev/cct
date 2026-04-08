@@ -8,6 +8,7 @@ const root = __dirname;
 const dataRoot = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(root, "data");
 const usersFile = path.join(dataRoot, "users.json");
 const sessionsFile = path.join(dataRoot, "sessions.json");
+const supportPostsFile = path.join(dataRoot, "support-posts.json");
 const sessionCookieName = "maplementor_session";
 const maxBodyBytes = 256 * 1024;
 
@@ -40,7 +41,8 @@ const progressDefaults = {
     spanishVoiceName: "",
     rate: 1,
     volume: 1,
-    autoRead: true,
+    autoRead: false,
+    autoReadChosen: false,
     listenAfterRead: false,
     showSpanish: false,
     fontScale: "base",
@@ -95,6 +97,7 @@ function sanitizeProgress(input = {}) {
     rate: Math.min(1.5, Math.max(0.7, safeNumber(settings.rate, 1))),
     volume: Math.min(1, Math.max(0, safeNumber(settings.volume, 1))),
     autoRead: Boolean(settings.autoRead),
+    autoReadChosen: Boolean(settings.autoReadChosen),
     listenAfterRead: Boolean(settings.listenAfterRead),
     showSpanish: Boolean(settings.showSpanish),
     fontScale,
@@ -112,6 +115,9 @@ function ensureDataFiles() {
   }
   if (!fs.existsSync(sessionsFile)) {
     fs.writeFileSync(sessionsFile, JSON.stringify({ sessions: [] }, null, 2));
+  }
+  if (!fs.existsSync(supportPostsFile)) {
+    fs.writeFileSync(supportPostsFile, JSON.stringify({ posts: [] }, null, 2));
   }
 }
 
@@ -148,6 +154,17 @@ function readSessions() {
 function writeSessions(store) {
   ensureDataFiles();
   writeJson(sessionsFile, store);
+}
+
+function readSupportPosts() {
+  ensureDataFiles();
+  const store = readJson(supportPostsFile, { posts: [] });
+  return Array.isArray(store.posts) ? store : { posts: [] };
+}
+
+function writeSupportPosts(store) {
+  ensureDataFiles();
+  writeJson(supportPostsFile, store);
 }
 
 function parseCookies(req) {
@@ -267,6 +284,38 @@ function sanitizeEmail(value) {
 
 function validEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function sanitizeSupportType(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  return ["issue", "feedback", "idea"].includes(normalized) ? normalized : "feedback";
+}
+
+function sanitizeSupportTitle(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 120);
+}
+
+function sanitizeSupportMessage(value) {
+  return String(value || "")
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, 1200);
+}
+
+function publicSupportPost(post) {
+  return {
+    id: post.id,
+    type: sanitizeSupportType(post.type),
+    title: sanitizeSupportTitle(post.title),
+    message: sanitizeSupportMessage(post.message),
+    status: typeof post.status === "string" ? post.status.slice(0, 40) : "new",
+    authorName: sanitizeName(post.authorName || "Maple Mentor user"),
+    createdAt: typeof post.createdAt === "string" ? post.createdAt : new Date().toISOString()
+  };
 }
 
 function hashPassword(password, salt) {
@@ -467,6 +516,66 @@ async function handleApi(req, res, url) {
     writeUsers(usersStore);
 
     json(res, 200, { progress: nextProgress });
+    return true;
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/support-posts") {
+    const store = readSupportPosts();
+    const posts = [...store.posts]
+      .map(publicSupportPost)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 80);
+    json(res, 200, { posts });
+    return true;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/support-posts") {
+    const session = findSession(req);
+    if (!session) {
+      json(res, 401, { error: "Please sign in to post on the support board." });
+      return true;
+    }
+
+    let body;
+    try {
+      body = await parseBody(req);
+    } catch (error) {
+      json(res, 400, { error: error.message === "Body too large" ? "Request too large." : "Please send valid JSON." });
+      return true;
+    }
+
+    const type = sanitizeSupportType(body.type);
+    const title = sanitizeSupportTitle(body.title);
+    const message = sanitizeSupportMessage(body.message);
+
+    if (title.length < 4) {
+      json(res, 400, { error: "Please add a short title so we know what the post is about." });
+      return true;
+    }
+
+    if (message.length < 8) {
+      json(res, 400, { error: "Please add a little more detail so we can understand the issue or idea." });
+      return true;
+    }
+
+    const store = readSupportPosts();
+    const post = {
+      id: crypto.randomUUID(),
+      type,
+      title,
+      message,
+      status: "new",
+      authorName: session.user.name,
+      userId: session.user.id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    store.posts.unshift(post);
+    store.posts = store.posts.slice(0, 500);
+    writeSupportPosts(store);
+
+    json(res, 201, { post: publicSupportPost(post) });
     return true;
   }
 

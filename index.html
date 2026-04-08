@@ -433,7 +433,7 @@
 
         <div class="toggle-list">
           <label class="toggle-row">
-            <input id="auto-read-toggle" type="checkbox" checked>
+            <input id="auto-read-toggle" type="checkbox">
             <span>Automatically read new questions</span>
           </label>
           <label class="toggle-row">
@@ -486,6 +486,105 @@
         The citizenship test is based on English or French understanding, so Maple Mentor keeps the question flow in
         English while offering Spanish translation and Spanish audio as extra support.
       </p>
+
+      <div class="helper-section">
+        <p class="helper-resource-label">FAQ</p>
+        <h3>Common Questions</h3>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>How do I start practicing?</summary>
+            <p class="faq-answer">Open Home and choose a short set, a chapter review, or Continue Where I Left Off.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can the app read the questions out loud?</summary>
+            <p class="faq-answer">Yes. Use the mini player in Practice to read the question, pause, replay, slow the voice, and repeat a choice.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I change the voice and text size?</summary>
+            <p class="faq-answer">Yes. Open the Settings gear to choose English and Spanish voices, change text size, and turn on Easy View.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What does Spanish Help do?</summary>
+            <p class="faq-answer">Spanish Help translates the card and can read it in Spanish, but the main practice flow stays in English so learners stay close to the real test wording.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Will my progress stay separate from other people?</summary>
+            <p class="faq-answer">Yes. Each signed-in learner keeps separate saved cards, scores, missed questions, voices, and comfort settings.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does this use the official study guide?</summary>
+            <p class="faq-answer">Yes. The question bank is based on the official Discover Canada guide linked above.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is this the real citizenship test?</summary>
+            <p class="faq-answer">No. It is a practice tool designed to help learners get ready for the real test.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What if audio does not work on my phone?</summary>
+            <p class="faq-answer">Try Chrome or Edge, tap the page once first, then use Read Question again. Some mobile browsers block speech until the user interacts with the page.</p>
+          </details>
+        </div>
+      </div>
+
+      <div class="helper-section">
+        <p class="helper-resource-label">Pricing Idea</p>
+        <h3>Keep It Simple</h3>
+        <p class="helper-copy">A small price can work well here if people can trust the app first. The cleanest launch is free basic practice with an optional upgrade later.</p>
+        <div class="pricing-grid">
+          <article class="plan-card">
+            <p class="plan-label">Free</p>
+            <h4>Start with confidence</h4>
+            <p class="plan-price">$0</p>
+            <ul class="plan-points">
+              <li>Short practice sets</li>
+              <li>Study by chapter</li>
+              <li>Official guide link</li>
+              <li>Public support board</li>
+            </ul>
+          </article>
+          <article class="plan-card featured">
+            <p class="plan-label">Premium</p>
+            <h4>Suggested upgrade</h4>
+            <p class="plan-price">$4.99 one-time</p>
+            <ul class="plan-points">
+              <li>Full mock tests</li>
+              <li>Saved progress and insights</li>
+              <li>Audio coach and voice tools</li>
+              <li>Missed-question and weak-topic practice</li>
+            </ul>
+          </article>
+        </div>
+        <p class="plan-note">Maple Mentor can stay free while you test adoption, then add an optional upgrade when the audience is ready.</p>
+      </div>
+
+      <div class="helper-section support-board">
+        <p class="helper-resource-label">Public Support Board</p>
+        <h3>Share Issues, Feedback, And Ideas</h3>
+        <p class="helper-copy">Posts here are public inside Maple Mentor so learners can help improve the tool together.</p>
+        <form class="support-form" id="support-form">
+          <label class="field">
+            <span>Type</span>
+            <select id="support-type">
+              <option value="issue">Issue</option>
+              <option value="feedback">Feedback</option>
+              <option value="idea">Idea</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Short title</span>
+            <input id="support-title" type="text" maxlength="120" placeholder="Buttons are hard to tap on my phone" required>
+          </label>
+          <label class="field">
+            <span>Details</span>
+            <textarea id="support-message" rows="5" maxlength="1200" placeholder="Tell us what happened, what device you were using, or what would make the app easier." required></textarea>
+          </label>
+          <button class="primary-action" id="support-submit-btn" type="submit">Post To Support Board</button>
+        </form>
+        <p class="support-status" id="support-status">Support posts are public. Please do not include private personal information.</p>
+        <div class="support-list" id="support-list">
+          <p class="home-empty">Loading recent posts...</p>
+        </div>
+      </div>
     </section>
 
     <section class="panel results-panel hidden" id="results-panel" data-mobile-panel="practice">

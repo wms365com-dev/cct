@@ -70,7 +70,8 @@ a.primary-action,
 a.secondary-action,
 a.ghost-button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -110,7 +111,8 @@ a.primary-action:focus-visible,
 a.secondary-action:focus-visible,
 a.ghost-button:focus-visible,
 input:focus-visible,
-select:focus-visible {
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid rgba(36, 90, 67, 0.25);
   outline-offset: 2px;
 }
@@ -308,6 +310,183 @@ select:focus-visible {
   width: 100%;
 }
 
+.helper-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 252, 247, 0.82);
+  border: 1px solid var(--line);
+}
+
+.helper-section h3,
+.plan-card h4,
+.support-post h4 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.helper-copy,
+.plan-note,
+.faq-answer,
+.support-status,
+.support-post p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.helper-copy,
+.plan-note,
+.support-status {
+  margin: 0.5rem 0 0;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.faq-item {
+  border: 1px solid rgba(42, 27, 23, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.9rem 1rem;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-answer {
+  margin: 0.75rem 0 0;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+}
+
+.plan-card {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(42, 27, 23, 0.12);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.plan-card.featured {
+  background: linear-gradient(135deg, rgba(175, 30, 45, 0.08), rgba(255, 255, 255, 0.94));
+  border-color: rgba(175, 30, 45, 0.18);
+}
+
+.plan-label {
+  margin: 0;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.plan-price {
+  margin: 0;
+  font-size: 1.2rem;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.plan-points {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.support-board {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.support-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.field textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(42, 27, 23, 0.14);
+  background: rgba(255, 255, 255, 0.76);
+  resize: vertical;
+}
+
+.support-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.support-post {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(42, 27, 23, 0.12);
+}
+
+.support-post-header,
+.support-post-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.support-post-header {
+  margin-bottom: 0.45rem;
+}
+
+.support-post-meta {
+  margin-bottom: 0.5rem;
+}
+
+.support-badge,
+.support-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.support-badge {
+  background: rgba(36, 90, 67, 0.08);
+  color: var(--forest);
+  text-transform: capitalize;
+}
+
+.support-state {
+  background: rgba(175, 30, 45, 0.08);
+  color: var(--red);
+}
+
+.support-author,
+.support-date {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .home-wide-btn {
   width: 100%;
 }
@@ -422,12 +601,14 @@ body[data-auth-state="signed-in"] .auth-shell {
 }
 
 .auth-status.error,
-.account-status.error {
+.account-status.error,
+.support-status.error {
   color: var(--red);
 }
 
 .auth-status.success,
-.account-status.success {
+.account-status.success,
+.support-status.success {
   color: var(--forest);
 }
 
@@ -1521,6 +1702,7 @@ body[data-easy-view="on"] .review-pill {
   .home-summary-strip,
   .quick-grid,
   .chapter-grid,
+  .pricing-grid,
   .mini-player-main,
   .mini-player-controls {
     grid-template-columns: 1fr;
@@ -1633,6 +1815,12 @@ body[data-easy-view="on"] .review-pill {
     width: 100%;
   }
 
+  .support-post-header,
+  .support-post-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .reading-banner {
     font-size: 0.98rem;
   }
@@ -1664,8 +1852,7 @@ body[data-easy-view="on"] .review-pill {
     display: none;
   }
 
-  body[data-easy-view="on"] .guide-card,
-  body[data-easy-view="on"] .helper-panel {
+  body[data-easy-view="on"] .guide-card {
     display: none;
   }
 

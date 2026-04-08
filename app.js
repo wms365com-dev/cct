@@ -114,6 +114,13 @@ const el = {
   listenBtn: document.querySelector("#listen-btn"),
   voiceStatus: document.querySelector("#voice-status"),
   transcript: document.querySelector("#transcript-text"),
+  supportForm: document.querySelector("#support-form"),
+  supportType: document.querySelector("#support-type"),
+  supportTitle: document.querySelector("#support-title"),
+  supportMessage: document.querySelector("#support-message"),
+  supportSubmitBtn: document.querySelector("#support-submit-btn"),
+  supportStatus: document.querySelector("#support-status"),
+  supportList: document.querySelector("#support-list"),
   results: document.querySelector("#results-panel"),
   resultsTitle: document.querySelector("#results-title"),
   resultsSummary: document.querySelector("#results-summary"),
@@ -138,7 +145,7 @@ const defaults = {
   missedIds: [],
   categoryStats: {},
   testDate: "",
-  settings: { englishVoiceName: "", spanishVoiceName: "", rate: 1, volume: 1, autoRead: true, listenAfterRead: false, showSpanish: false, fontScale: "base", easyView: false },
+  settings: { englishVoiceName: "", spanishVoiceName: "", rate: 1, volume: 1, autoRead: false, autoReadChosen: false, listenAfterRead: false, showSpanish: false, fontScale: "base", easyView: false },
 };
 
 const state = {
@@ -175,6 +182,7 @@ const state = {
   saveInFlight: false,
   resumeSession: null,
   seriesSeenIds: [],
+  supportPosts: [],
   interacted: false,
   progress: clone(defaults),
 };
@@ -192,6 +200,9 @@ function normalizeProgress(progress) {
   };
   if (!merged.settings.englishVoiceName && merged.settings.voiceName) {
     merged.settings.englishVoiceName = merged.settings.voiceName;
+  }
+  if (!merged.settings.autoReadChosen) {
+    merged.settings.autoRead = false;
   }
   merged.savedIds = uniqueIds(merged.savedIds);
   merged.completedIds = uniqueIds(merged.completedIds);
@@ -227,6 +238,15 @@ async function api(path, options = {}) {
 
   return payload;
 }
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
 function setAuthState(mode) {
   document.body.dataset.authState = mode;
 }
@@ -254,6 +274,110 @@ function updateSyncStatus(message, tone = "") {
   el.syncStatus.textContent = message;
   el.syncStatus.classList.remove("error", "success");
   if (tone) el.syncStatus.classList.add(tone);
+}
+function setSupportStatus(message, tone = "") {
+  if (!el.supportStatus) return;
+  el.supportStatus.textContent = message;
+  el.supportStatus.classList.remove("error", "success");
+  if (tone) el.supportStatus.classList.add(tone);
+}
+function setSupportBusy(isBusy) {
+  if (!el.supportForm) return;
+  el.supportForm.querySelectorAll("input, select, textarea, button").forEach((element) => {
+    element.disabled = isBusy;
+  });
+}
+function supportTypeLabel(type) {
+  if (type === "issue") return "Issue";
+  if (type === "idea") return "Idea";
+  return "Feedback";
+}
+function formatSupportTime(value) {
+  if (!value) return "Just now";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Just now";
+  return `${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })} at ${date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
+}
+function renderSupportPosts() {
+  if (!el.supportList) return;
+  if (!state.supportPosts.length) {
+    el.supportList.innerHTML = '<p class="home-empty">No public posts yet. Share the first idea, issue, or piece of feedback.</p>';
+    return;
+  }
+  el.supportList.innerHTML = state.supportPosts.map((post) => `
+    <article class="support-post">
+      <div class="support-post-header">
+        <h4>${escapeHtml(post.title)}</h4>
+        <span class="support-badge">${escapeHtml(supportTypeLabel(post.type))}</span>
+      </div>
+      <div class="support-post-meta">
+        <span class="support-author">${escapeHtml(post.authorName || "Maple Mentor user")}</span>
+        <span class="support-date">${escapeHtml(formatSupportTime(post.createdAt))}</span>
+        <span class="support-state">${escapeHtml(post.status || "new")}</span>
+      </div>
+      <p>${escapeHtml(post.message).replace(/\n/g, "<br>")}</p>
+    </article>
+  `).join("");
+}
+async function loadSupportPosts(options = {}) {
+  const { silent = false } = options;
+  if (el.supportList && !silent && !state.supportPosts.length) {
+    el.supportList.innerHTML = '<p class="home-empty">Loading recent posts...</p>';
+  }
+  try {
+    const payload = await api("/api/support-posts", { method: "GET" });
+    state.supportPosts = Array.isArray(payload.posts) ? payload.posts : [];
+    renderSupportPosts();
+    if (!silent) setSupportStatus("Support posts are public. Please do not include private personal information.");
+  } catch {
+    if (el.supportList && !state.supportPosts.length) {
+      el.supportList.innerHTML = '<p class="home-empty">We could not load the public support board right now.</p>';
+    }
+    if (!silent) setSupportStatus("We could not load the support board right now.", "error");
+  }
+}
+async function handleSupportSubmit(event) {
+  event.preventDefault();
+  if (!state.user) {
+    setSupportStatus("Please sign in before posting to the support board.", "error");
+    return;
+  }
+
+  const type = el.supportType.value;
+  const title = el.supportTitle.value.trim();
+  const message = el.supportMessage.value.trim();
+
+  if (title.length < 4) {
+    setSupportStatus("Please add a short title first.", "error");
+    el.supportTitle.focus();
+    return;
+  }
+  if (message.length < 8) {
+    setSupportStatus("Please add a little more detail so we can understand it.", "error");
+    el.supportMessage.focus();
+    return;
+  }
+
+  setSupportBusy(true);
+  setSupportStatus("Posting to the public support board...");
+  try {
+    const payload = await api("/api/support-posts", {
+      method: "POST",
+      body: { type, title, message }
+    });
+    el.supportForm.reset();
+    if (payload.post) {
+      state.supportPosts = [payload.post, ...state.supportPosts.filter((post) => post.id !== payload.post.id)].slice(0, 80);
+      renderSupportPosts();
+    } else {
+      await loadSupportPosts({ silent: true });
+    }
+    setSupportStatus("Thank you. Your post is now public on the support board.", "success");
+  } catch (error) {
+    setSupportStatus(error.message, "error");
+  } finally {
+    setSupportBusy(false);
+  }
 }
 function hydrateControlsFromProgress() {
   el.rate.value = state.progress.settings.rate;
@@ -1533,7 +1657,7 @@ function startSession(mode, opts = {}) {
   storeResumeSession();
   if (isMobileAppView()) setMobileView("practice");
   render();
-  if (announce && state.interacted) speak(`${MODES[mode].label} started. ${MODES[mode].title}`, { followQuestion: true });
+  if (announce && state.interacted && state.progress.settings.autoRead) readQuestion();
 }
 
 function startQuestionIdSession(ids, options = {}) {
@@ -1594,6 +1718,9 @@ function bind() {
   });
   el.signupForm.addEventListener("submit", handleSignup);
   el.loginForm.addEventListener("submit", handleLogin);
+  if (el.supportForm) {
+    el.supportForm.addEventListener("submit", handleSupportSubmit);
+  }
   el.signOutBtn.addEventListener("click", () => {
     void signOut();
   });
@@ -1759,7 +1886,11 @@ function bind() {
   el.spanishVoice.addEventListener("change", (e) => { state.progress.settings.spanishVoiceName = e.target.value; persist(); });
   el.rate.addEventListener("input", (e) => { state.progress.settings.rate = Number(e.target.value); persist(); });
   el.vol.addEventListener("input", (e) => { state.progress.settings.volume = Number(e.target.value); persist(); });
-  el.autoRead.addEventListener("change", (e) => { state.progress.settings.autoRead = e.target.checked; persist(); });
+  el.autoRead.addEventListener("change", (e) => {
+    state.progress.settings.autoRead = e.target.checked;
+    state.progress.settings.autoReadChosen = true;
+    persist();
+  });
   el.autoListen.addEventListener("change", (e) => { state.progress.settings.listenAfterRead = e.target.checked; persist(); });
   el.showSpanish.addEventListener("change", (e) => {
     state.progress.settings.showSpanish = e.target.checked;
@@ -1792,6 +1923,7 @@ function init() {
   initRecognition();
   populateVoices();
   if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = populateVoices;
+  void loadSupportPosts({ silent: true });
   void restoreSession();
 }
 
